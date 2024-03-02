@@ -1,3 +1,48 @@
 {
-  "extends": "next/core-web-vitals"
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": ["airbnb-base", "next/core-web-vitals"],
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  },
+  "rules": {
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    "import/no-unresolved": "off",
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"],
+    "eqeqeq": ["error", "always"],
+    "no-undef": "off",
+    "no-param-reassign": "off",
+    "no-unused-vars": "error",
+    "prefer-const": "error",
+    "prefer-arrow-callback": "error",
+    "handle-callback-err": "error",
+    "no-throw-literal": "error",
+    "import/order": ["error", { "newlines-between": "always" }],
+    "import/no-duplicates": "error",
+    "no-restricted-globals": ["error", "event"],
+    "import/prefer-default-export": "off",
+    "no-console": "off"
+  }
 }
