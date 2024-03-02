@@ -55,11 +55,11 @@ export default function StoriesList({ initialStories }: { initialStories: Story[
         dataSource={stories}
         renderItem={({
           url, title, by, score, time,
-        }) => (
+        }, index) => (
           <List.Item>
             <List.Item.Meta
               avatar={<ProjectTwoTone />}
-              title={<a href={url}>{title}</a>}
+              title={<a href={url}>{`${index + 1}. ${title}`}</a>}
               description={`Автор: ${by} | Рейтинг: ${score} | Дата: ${new Date(time * 1000).toLocaleDateString()}`}
             />
           </List.Item>
