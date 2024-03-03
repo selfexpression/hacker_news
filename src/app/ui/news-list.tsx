@@ -1,69 +1,100 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import {
+  useState, useEffect, useRef, useCallback,
+} from 'react';
 import {
   List, Button, Row, Col, Avatar, Typography,
 } from 'antd';
 import { ProjectTwoTone } from '@ant-design/icons';
+import Link from 'next/link';
 
-import getStories from '../lib/data';
+import { getStories } from '../lib/data';
 
+import { pageRoutes } from '@/utils/routes';
 import type { Story } from '@/types/definitions';
 
-function StoriesListHeader({ onRefresh, isLoaded }: { onRefresh: () => void, isLoaded: boolean }) {
+function StoriesListHeader(
+  { onRefresh, isRefreshing }
+  : { onRefresh: () => void, isRefreshing: boolean },
+) {
   const { Text } = Typography;
 
   return (
-    <Row justify="space-between" align="middle">
-      <Col>
-        <Avatar src="H-logo.png" />
-        <Text strong style={{ marginLeft: 10 }}>Hacker News</Text>
-      </Col>
-      <Col>
-        <Button type="primary" onClick={onRefresh} loading={isLoaded}>
+    <nav>
+      <Row justify="space-between" align="middle">
+        <Col>
+          <Avatar src="H-logo.png" />
+          <Text strong style={{ marginLeft: 10 }}>Hacker News</Text>
+        </Col>
+        <Col>
+          <Button type="primary" onClick={onRefresh} loading={isRefreshing}>
             Обновить новости
-        </Button>
-      </Col>
-    </Row>
+          </Button>
+        </Col>
+      </Row>
+    </nav>
   );
 }
 
-export default function StoriesList({ initialStories }: { initialStories: Story[] }): JSX.Element {
-  const [stories, setStories] = useState<Story[]>(initialStories);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+function StoryItem({ story, index }: { story: Story, index: number }) {
+  return (
+    <List.Item>
+      <List.Item.Meta
+        avatar={<ProjectTwoTone />}
+        title={
+          <Link href={pageRoutes.stories(story.id)}>
+            {`${index + 1}. ${story.title}`}
+          </Link>
+        }
+        description={`
+          Автор: ${story.by} | 
+          Рейтинг: ${story.score} | 
+          Дата: ${new Date(story.time * 1000).toLocaleDateString()}`}
+      />
+    </List.Item>
+  );
+}
 
-  const refreshNews = async () => {
-    setIsLoaded(true);
+export default function StoriesList(
+  { initialStories }: { initialStories: Story[] },
+): JSX.Element {
+  const [stories, setStories] = useState<Story[]>(initialStories);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const refreshNews = useCallback(async () => {
+    setIsRefreshing(true);
     const updatedNews = await getStories();
     setStories(updatedNews);
-    setIsLoaded(false);
-  };
+    setIsRefreshing(false);
+  }, []);
 
   useEffect(() => {
-    const interval = setInterval(async () => {
-      await refreshNews();
-    }, 60000);
+    intervalRef.current = setInterval(refreshNews, 60000);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [refreshNews]);
 
-    return () => clearInterval(interval);
-  }, []);
+  const handleRefreshClick = async () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    await refreshNews();
+    intervalRef.current = setInterval(refreshNews, 60000);
+  };
 
   return (
     <>
       <List
-        header={<StoriesListHeader onRefresh={refreshNews} isLoaded={isLoaded} />}
+        header={
+          <StoriesListHeader
+            onRefresh={handleRefreshClick}
+            isRefreshing={isRefreshing}
+          />
+        }
         itemLayout="horizontal"
         dataSource={stories}
-        renderItem={({
-          url, title, by, score, time,
-        }, index) => (
-          <List.Item>
-            <List.Item.Meta
-              avatar={<ProjectTwoTone />}
-              title={<a href={url}>{`${index + 1}. ${title}`}</a>}
-              description={`Автор: ${by} | Рейтинг: ${score} | Дата: ${new Date(time * 1000).toLocaleDateString()}`}
-            />
-          </List.Item>
-        )}
+        renderItem={(story, index) => <StoryItem story={story} index={index} />}
       />
     </>
   );
