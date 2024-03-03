@@ -2,7 +2,9 @@
 
 import { Metadata } from 'next';
 
-import { getCurrentStory } from '@/app/lib/data';
+import { getCurrentStory, getCommentsById } from '@/app/lib/data';
+import StoryHeader from '@/app/ui/stories/story-header';
+import StoryComments from '@/app/ui/stories/story-comments';
 
 type Params = {
   params: { id: string };
@@ -10,20 +12,22 @@ type Params = {
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { id } = params;
-  const data = await getCurrentStory(id);
+  const story = await getCurrentStory(id);
 
   return {
-    title: data.title,
+    title: story.title,
   };
 }
 
 export default async function Story({ params }: Params): Promise<JSX.Element> {
   const { id } = params;
-  const data = await getCurrentStory(id);
+  const story = await getCurrentStory(id);
+  const comments = story.kids ? await getCommentsById(story.kids) : [];
 
   return (
     <article>
-      <h1>{data.title}</h1>
+      <StoryHeader story={story} />
+      <StoryComments comments={comments} />
     </article>
   );
 }

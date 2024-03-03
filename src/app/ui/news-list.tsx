@@ -21,19 +21,17 @@ function StoriesListHeader(
   const { Text } = Typography;
 
   return (
-    <nav>
-      <Row justify="space-between" align="middle">
-        <Col>
-          <Avatar src="H-logo.png" />
-          <Text strong style={{ marginLeft: 10 }}>Hacker News</Text>
-        </Col>
-        <Col>
-          <Button type="primary" onClick={onRefresh} loading={isRefreshing}>
-            Обновить новости
-          </Button>
-        </Col>
-      </Row>
-    </nav>
+    <Row justify="space-between" align="middle">
+      <Col>
+        <Avatar src="H-logo.png" />
+        <Text strong style={{ marginLeft: 10 }}>Hacker News</Text>
+      </Col>
+      <Col>
+        <Button type="primary" onClick={onRefresh} loading={isRefreshing}>
+            Refresh News
+        </Button>
+      </Col>
+    </Row>
   );
 }
 
@@ -48,9 +46,9 @@ function StoryItem({ story, index }: { story: Story, index: number }) {
           </Link>
         }
         description={`
-          Автор: ${story.by} | 
-          Рейтинг: ${story.score} | 
-          Дата: ${new Date(story.time * 1000).toLocaleDateString()}`}
+          Author: ${story.by} | 
+          Rating: ${story.score} | 
+          Date: ${new Date(story.time * 1000).toLocaleDateString()}`}
       />
     </List.Item>
   );
