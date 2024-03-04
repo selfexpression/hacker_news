@@ -1,3 +1,5 @@
+import { FileOutlined, CarryOutOutlined } from '@ant-design/icons';
+
 import type { Comment, TreeNode } from '@/types/definitions';
 import { getCommentsById } from '@/app/lib/data';
 
@@ -7,11 +9,13 @@ export const generateTreeData = (
   key: id.toString(),
   title: text,
   isLeaf: !kids?.length,
+  icon: !kids?.length && <FileOutlined />,
   children: kids?.length
     ? kids.map((kid) => (
       {
         key: kid.toString(),
         title: 'Loading...',
+        icon: <CarryOutOutlined />,
         loaded: false,
       }
     ))
@@ -23,6 +27,8 @@ export const generateNestedTreeData = (
 ): Promise<TreeNode[]> => Promise.all(comments.map(async ({ id, text, kids }) => ({
   key: id.toString(),
   title: text,
+  isLeaf: !kids?.length,
+  icon: !kids?.length && <FileOutlined/>,
   children: kids?.length
     ? await generateNestedTreeData(await getCommentsById(kids))
     : [],

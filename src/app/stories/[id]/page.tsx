@@ -30,7 +30,7 @@ export default async function Story(
   const comments = story.kids ? await getCommentsById(story.kids) : [];
 
   return (
-    <article>
+    <article style={{ padding: '0 10px 10px' }}>
       <StoryProvider>
         <StoryHeader story={story} />
         <StoryComments comments={comments} storyId={id} />

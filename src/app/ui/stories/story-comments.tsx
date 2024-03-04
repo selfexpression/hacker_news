@@ -4,7 +4,6 @@ import {
   useState, useEffect, SetStateAction, Dispatch,
 } from 'react';
 import { Tree, Divider, Button } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
 import type { EventDataNode } from 'antd/es/tree';
 import type { Key } from 'antd/es/table/interface';
 
@@ -85,7 +84,7 @@ export default function StoryComments(
       <RefreshButton setTreeData={setTreeData} storyId={storyId} />
       <Tree
         showLine
-        switcherIcon={<DownOutlined />}
+        showIcon
         loadData={onLoadData}
         expandedKeys={currentExpandedKeys}
         onExpand={onExpand}
