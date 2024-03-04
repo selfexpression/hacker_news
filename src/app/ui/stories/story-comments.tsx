@@ -80,7 +80,7 @@ export default function StoryComments(
   };
 
   return (
-    <>
+    <div style={{ marginTop: 30 }}>
       <RefreshButton setTreeData={setTreeData} storyId={storyId} />
       <Tree
         showLine
@@ -91,6 +91,6 @@ export default function StoryComments(
         treeData={treeData}
         defaultExpandParent
       />
-    </>
+    </div>
   );
 }

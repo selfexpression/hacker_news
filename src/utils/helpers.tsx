@@ -3,11 +3,28 @@ import { FileOutlined, CarryOutOutlined } from '@ant-design/icons';
 import type { Comment, TreeNode } from '@/types/definitions';
 import { getCommentsById } from '@/app/lib/data';
 
+const cleanText = (text: string): string => (
+  text
+    ? text
+      .replace(/<a .*?>(.*?)<\/a>/g, ' ')
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#x27;/g, '\'')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/[^a-zA-Z\s,.!?']/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+    : ''
+);
+
 export const generateTreeData = (
   comments: Comment[],
 ): TreeNode[] => comments.map(({ id, text, kids }) => ({
   key: id.toString(),
-  title: text,
+  title: cleanText(text),
   isLeaf: !kids?.length,
   icon: !kids?.length && <FileOutlined />,
   children: kids?.length
@@ -26,7 +43,7 @@ export const generateNestedTreeData = (
   comments: Comment[],
 ): Promise<TreeNode[]> => Promise.all(comments.map(async ({ id, text, kids }) => ({
   key: id.toString(),
-  title: text,
+  title: cleanText(text),
   isLeaf: !kids?.length,
   icon: !kids?.length && <FileOutlined/>,
   children: kids?.length
