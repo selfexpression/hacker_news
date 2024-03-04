@@ -22,7 +22,9 @@ export async function getStories(): Promise<Story[]> {
   }
 }
 
-export async function getCurrentStory(id: string | number): Promise<Story> {
+export async function getCurrentStory(
+  id: string | number,
+): Promise<Story> {
   noStore();
   try {
     const { data } = await axios.get(hackerNewsApi.currentItem(id));
@@ -33,7 +35,9 @@ export async function getCurrentStory(id: string | number): Promise<Story> {
   }
 }
 
-export async function getCommentsById(ids: number[] | string[]): Promise<Comment[]> {
+export async function getCommentsById(
+  ids: number[] | string[],
+): Promise<Comment[]> {
   noStore();
   try {
     const comments = await Promise.all(ids.map((commentId) => (

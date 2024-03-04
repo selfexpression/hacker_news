@@ -10,7 +10,9 @@ type Params = {
   params: { id: string };
 }
 
-export async function generateMetadata({ params }: Params): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: Params,
+): Promise<Metadata> {
   const { id } = params;
   const story = await getCurrentStory(id);
 
@@ -19,7 +21,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
-export default async function Story({ params }: Params): Promise<JSX.Element> {
+export default async function Story(
+  { params }: Params,
+): Promise<JSX.Element> {
   const { id } = params;
   const story = await getCurrentStory(id);
   const comments = story.kids ? await getCommentsById(story.kids) : [];

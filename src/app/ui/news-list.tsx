@@ -17,7 +17,7 @@ import type { Story } from '@/types/definitions';
 function StoriesListHeader(
   { onRefresh, isRefreshing }
   : { onRefresh: () => void, isRefreshing: boolean },
-) {
+): JSX.Element {
   const { Text } = Typography;
 
   return (
@@ -35,7 +35,9 @@ function StoriesListHeader(
   );
 }
 
-function StoryItem({ story, index }: { story: Story, index: number }) {
+function StoryItem(
+  { story, index }: { story: Story, index: number },
+): JSX.Element {
   return (
     <List.Item>
       <List.Item.Meta

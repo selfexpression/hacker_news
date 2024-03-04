@@ -6,7 +6,9 @@ import {
 
 import type { Story } from '@/types/definitions';
 
-export default function StoryHeader({ story }: { story: Story }) {
+export default function StoryHeader(
+  { story }: { story: Story },
+): JSX.Element {
   const { Title, Text } = Typography;
 
   return (

@@ -17,7 +17,7 @@ function RefreshButton(
     setTreeData,
     storyId,
   }: { setTreeData: Dispatch<SetStateAction<TreeNode[]>>, storyId: string},
-) {
+): JSX.Element {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const refreshComments = async () => {
@@ -47,7 +47,7 @@ export default function StoryComments(
     comments,
     storyId,
   }: { comments: Comment[], storyId: string },
-) {
+): JSX.Element {
   const [treeData, setTreeData] = useState<TreeNode[]>([]);
   const [currentExpandedKeys, setCurrentExpandedKeys] = useState<Key[]>([]);
 
