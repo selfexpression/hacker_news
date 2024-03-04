@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Tree } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import type { EventDataNode } from 'antd/lib/tree';
+import type { EventDataNode } from 'antd/es/tree';
 import type { Key } from 'antd/es/table/interface';
 
 import type { Comment } from '@/types/definitions';
@@ -12,17 +12,37 @@ import { getCommentsById } from '@/app/lib/data';
 interface TreeNode {
   title: string;
   key: string;
+  isLeaf?: boolean;
   children?: TreeNode[];
+  loaded?: boolean;
 }
 
-const generateTreeData = (comments: Comment[]): TreeNode[] => comments.map((comment) => ({
-  title: comment.text,
-  key: comment.id.toString(),
-  children: comment.kids ? comment.kids.map((id) => ({
-    key: id.toString(),
-    title: 'Loading...',
-  })) : [],
+const generateTreeData = (
+  comments: Comment[],
+): TreeNode[] => comments.map(({ id, text, kids }) => ({
+  key: id.toString(),
+  title: text,
+  isLeaf: !kids?.length,
+  children: kids?.length
+    ? kids.map((kid) => ({ key: kid.toString(), title: 'Loading...' }))
+    : [],
 }));
+
+const updateTreeData = (
+  list: TreeNode[],
+  key: string,
+  children: TreeNode[],
+): TreeNode[] => list.map((node) => (node.key === key
+  ? {
+    ...node, children, loaded: true,
+  }
+  : {
+    ...node,
+    children: node.children
+      ? updateTreeData(node.children, key, children)
+      : node.children,
+  }
+));
 
 export default function StoryComments({ comments }: { comments: Comment[] }) {
   const [treeData, setTreeData] = useState<TreeNode[]>([]);
@@ -31,31 +51,38 @@ export default function StoryComments({ comments }: { comments: Comment[] }) {
     setTreeData(generateTreeData(comments));
   }, [comments]);
 
-  const onLoadData = async (node: TreeNode): Promise<TreeNode[]> => {
-    if (!node.children) return [];
-    const childComments = await getCommentsById(node.children.map((child) => Number(child.key)));
-    return generateTreeData(childComments);
+  const onLoadData = async (node: TreeNode) => {
+    if (!node.isLeaf && !node.loaded) {
+      const childComments = await getCommentsById(
+        node.children?.map(({ key }) => key) || [],
+      );
+
+      return generateTreeData(childComments);
+    }
+
+    return node.children || [];
   };
 
   const onExpand = async (
     expandedKeys: Key[],
     { node, expanded }: { node: EventDataNode<TreeNode>; expanded: boolean },
   ) => {
-    if (!expanded || !node.children?.length) return;
-    const children = await onLoadData(node);
-    setTreeData((current) => (
-      current.map((item) => (item.key === node.key ? { ...item, children } : item))
-    ));
+    if (expanded) {
+      const childNodes = await onLoadData(node);
+      if (node.children?.some((child) => child.title === 'Loading...') || !node.loaded) {
+        setTreeData((current) => updateTreeData(current, node.key, childNodes));
+      }
+    }
   };
 
   return (
     <Tree
       showLine
-      onExpand={onExpand}
       switcherIcon={<DownOutlined />}
       loadData={onLoadData}
+      onExpand={onExpand}
       treeData={treeData}
-      defaultExpandParent={true}
+      defaultExpandParent
     />
   );
 }
