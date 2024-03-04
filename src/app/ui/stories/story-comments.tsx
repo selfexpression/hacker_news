@@ -1,17 +1,55 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Tree } from 'antd';
+import {
+  useState, useEffect, SetStateAction, Dispatch,
+} from 'react';
+import { Tree, Divider, Button } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import type { EventDataNode } from 'antd/es/tree';
 import type { Key } from 'antd/es/table/interface';
 
 import type { Comment, TreeNode } from '@/types/definitions';
-import { getCommentsById } from '@/app/lib/data';
-import { generateTreeData, updateTreeData } from '@/utils/helpers';
+import { getCommentsById, getCurrentStory } from '@/app/lib/data';
+import { generateTreeData, updateTreeData, generateNestedTreeData } from '@/utils/helpers';
 
-export default function StoryComments({ comments }: { comments: Comment[] }) {
+function RefreshButton(
+  {
+    setTreeData,
+    storyId,
+  }: { setTreeData: Dispatch<SetStateAction<TreeNode[]>>, storyId: string},
+) {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const refreshComments = async () => {
+    setIsRefreshing(true);
+    const updatedStory = await getCurrentStory(storyId);
+    const newComments = updatedStory.kids ? await getCommentsById(updatedStory.kids) : [];
+    setTreeData(await generateNestedTreeData(newComments));
+    setIsRefreshing(false);
+  };
+
+  return (
+    <Divider orientation="left" plain>
+      <Button
+        type="primary"
+        size="small"
+        loading={isRefreshing}
+        onClick={refreshComments}
+      >
+          Refresh comments
+      </Button>
+    </Divider>
+  );
+}
+
+export default function StoryComments(
+  {
+    comments,
+    storyId,
+  }: { comments: Comment[], storyId: string },
+) {
   const [treeData, setTreeData] = useState<TreeNode[]>([]);
+  const [currentExpandedKeys, setCurrentExpandedKeys] = useState<Key[]>([]);
 
   useEffect(() => {
     setTreeData(generateTreeData(comments));
@@ -25,7 +63,6 @@ export default function StoryComments({ comments }: { comments: Comment[] }) {
 
       return generateTreeData(childComments);
     }
-
     return node.children || [];
   };
 
@@ -33,22 +70,29 @@ export default function StoryComments({ comments }: { comments: Comment[] }) {
     expandedKeys: Key[],
     { node, expanded }: { node: EventDataNode<TreeNode>; expanded: boolean },
   ) => {
-    if (expanded) {
+    setCurrentExpandedKeys(expandedKeys);
+
+    if (expanded && !node.loaded) {
       const childNodes = await onLoadData(node);
-      if (node.children?.some((child) => child.title === 'Loading...') || !node.loaded) {
-        setTreeData((current) => updateTreeData(current, node.key, childNodes));
-      }
+      setTreeData((current) => updateTreeData(current, node.key, childNodes));
     }
   };
 
   return (
-    <Tree
-      showLine
-      switcherIcon={<DownOutlined />}
-      loadData={onLoadData}
-      onExpand={onExpand}
-      treeData={treeData}
-      defaultExpandParent
-    />
+    <>
+      <RefreshButton
+        setTreeData={setTreeData}
+        storyId={storyId}
+      />
+      <Tree
+        showLine
+        switcherIcon={<DownOutlined />}
+        loadData={onLoadData}
+        expandedKeys={currentExpandedKeys}
+        onExpand={onExpand}
+        treeData={treeData}
+        defaultExpandParent
+      />
+    </>
   );
 }

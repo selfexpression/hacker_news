@@ -27,7 +27,7 @@ export default async function Story({ params }: Params): Promise<JSX.Element> {
   return (
     <article>
       <StoryHeader story={story} />
-      <StoryComments comments={comments} />
+      <StoryComments comments={comments} storyId={id} />
     </article>
   );
 }
