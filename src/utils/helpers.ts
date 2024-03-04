@@ -1,12 +1,28 @@
-import type { Comment, TreeData } from '@/types/definitions';
-import { getCommentsById } from '@/app/lib/data';
+import type { Comment, TreeNode } from '@/types/definitions';
 
-export const generateTreeData = async (
+export const generateTreeData = (
   comments: Comment[],
-): Promise<TreeData[]> => Promise.all(comments.map(async (comment) => ({
-  title: comment.text,
-  key: comment.id.toString(),
-  children: comment.kids
-    ? await generateTreeData(await getCommentsById(comment.kids))
+): TreeNode[] => comments.map(({ id, text, kids }) => ({
+  key: id.toString(),
+  title: text,
+  isLeaf: !kids?.length,
+  children: kids?.length
+    ? kids.map((kid) => ({ key: kid.toString(), title: 'Loading...' }))
     : [],
-})));
+}));
+
+export const updateTreeData = (
+  list: TreeNode[],
+  key: string,
+  children: TreeNode[],
+): TreeNode[] => list.map((node) => (node.key === key
+  ? {
+    ...node, children, loaded: true,
+  }
+  : {
+    ...node,
+    children: node.children
+      ? updateTreeData(node.children, key, children)
+      : node.children,
+  }
+));

@@ -20,8 +20,10 @@ export type Comment = {
   type : string;
 }
 
-export type TreeData = {
+export type TreeNode = {
   title: string;
   key: string;
-  children: TreeData[];
+  isLeaf?: boolean;
+  children?: TreeNode[];
+  loaded?: boolean;
 }

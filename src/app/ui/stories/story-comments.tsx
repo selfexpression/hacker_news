@@ -6,43 +6,9 @@ import { DownOutlined } from '@ant-design/icons';
 import type { EventDataNode } from 'antd/es/tree';
 import type { Key } from 'antd/es/table/interface';
 
-import type { Comment } from '@/types/definitions';
+import type { Comment, TreeNode } from '@/types/definitions';
 import { getCommentsById } from '@/app/lib/data';
-
-interface TreeNode {
-  title: string;
-  key: string;
-  isLeaf?: boolean;
-  children?: TreeNode[];
-  loaded?: boolean;
-}
-
-const generateTreeData = (
-  comments: Comment[],
-): TreeNode[] => comments.map(({ id, text, kids }) => ({
-  key: id.toString(),
-  title: text,
-  isLeaf: !kids?.length,
-  children: kids?.length
-    ? kids.map((kid) => ({ key: kid.toString(), title: 'Loading...' }))
-    : [],
-}));
-
-const updateTreeData = (
-  list: TreeNode[],
-  key: string,
-  children: TreeNode[],
-): TreeNode[] => list.map((node) => (node.key === key
-  ? {
-    ...node, children, loaded: true,
-  }
-  : {
-    ...node,
-    children: node.children
-      ? updateTreeData(node.children, key, children)
-      : node.children,
-  }
-));
+import { generateTreeData, updateTreeData } from '@/utils/helpers';
 
 export default function StoryComments({ comments }: { comments: Comment[] }) {
   const [treeData, setTreeData] = useState<TreeNode[]>([]);
