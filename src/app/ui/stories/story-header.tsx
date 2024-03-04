@@ -5,10 +5,12 @@ import {
 } from 'antd';
 
 import type { Story } from '@/types/definitions';
+import { useStory } from '@/app/hooks';
 
 export default function StoryHeader(
   { story }: { story: Story },
 ): JSX.Element {
+  const { story: contextStory } = useStory();
   const { Title, Text } = Typography;
 
   return (
@@ -16,7 +18,9 @@ export default function StoryHeader(
       <Row align="middle" gutter={[16, 16]}>
         <Col>
           <Title level={4} style={{ marginBottom: 0, marginTop: 0 }}>
-            <a href={story.url} target="_blank" rel="noopener noreferrer">{story.title}</a>
+            <a href={story.url} target="_blank" rel="noopener noreferrer">
+              {story.title}
+            </a>
           </Title>
         </Col>
       </Row>
@@ -30,7 +34,7 @@ export default function StoryHeader(
         </Col>
         <Divider type="vertical" />
         <Col>
-          <Text>Comments: {story.descendants}</Text>
+          <Text>Comments: {contextStory?.descendants ?? story.descendants}</Text>
         </Col>
       </Row>
     </header>

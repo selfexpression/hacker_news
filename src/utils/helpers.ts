@@ -18,7 +18,7 @@ export const generateTreeData = (
     : [],
 }));
 
-export const generateNestedTreeData = async (
+export const generateNestedTreeData = (
   comments: Comment[],
 ): Promise<TreeNode[]> => Promise.all(comments.map(async ({ id, text, kids }) => ({
   key: id.toString(),

@@ -5,6 +5,7 @@ import { Metadata } from 'next';
 import { getCurrentStory, getCommentsById } from '@/app/lib/data';
 import StoryHeader from '@/app/ui/stories/story-header';
 import StoryComments from '@/app/ui/stories/story-comments';
+import { StoryProvider } from '@/app/context/StoryContext';
 
 type Params = {
   params: { id: string };
@@ -30,8 +31,10 @@ export default async function Story(
 
   return (
     <article>
-      <StoryHeader story={story} />
-      <StoryComments comments={comments} storyId={id} />
+      <StoryProvider>
+        <StoryHeader story={story} />
+        <StoryComments comments={comments} storyId={id} />
+      </StoryProvider>
     </article>
   );
 }

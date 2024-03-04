@@ -11,6 +11,7 @@ import type { Key } from 'antd/es/table/interface';
 import type { Comment, TreeNode } from '@/types/definitions';
 import { getCommentsById, getCurrentStory } from '@/app/lib/data';
 import { generateTreeData, updateTreeData, generateNestedTreeData } from '@/utils/helpers';
+import { useStory } from '@/app/hooks';
 
 function RefreshButton(
   {
@@ -18,13 +19,15 @@ function RefreshButton(
     storyId,
   }: { setTreeData: Dispatch<SetStateAction<TreeNode[]>>, storyId: string},
 ): JSX.Element {
+  const { setStory } = useStory();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const refreshComments = async () => {
+  const refreshComments = async (): Promise<void> => {
     setIsRefreshing(true);
     const updatedStory = await getCurrentStory(storyId);
     const newComments = updatedStory.kids ? await getCommentsById(updatedStory.kids) : [];
     setTreeData(await generateNestedTreeData(newComments));
+    setStory(updatedStory);
     setIsRefreshing(false);
   };
 
@@ -55,21 +58,20 @@ export default function StoryComments(
     setTreeData(generateTreeData(comments));
   }, [comments]);
 
-  const onLoadData = async (node: TreeNode) => {
-    if (!node.isLeaf && !node.loaded) {
-      const childComments = await getCommentsById(
-        node.children?.map(({ key }) => key) || [],
-      );
-
-      return generateTreeData(childComments);
+  const onLoadData = async (node: TreeNode): Promise<TreeNode[]> => {
+    if (node.isLeaf || node.loaded) {
+      return node.children || [];
     }
-    return node.children || [];
+
+    const childKeys = node.children?.map(({ key }) => key) || [];
+    const childComments = await getCommentsById(childKeys);
+    return generateTreeData(childComments);
   };
 
   const onExpand = async (
     expandedKeys: Key[],
-    { node, expanded }: { node: EventDataNode<TreeNode>; expanded: boolean },
-  ) => {
+    { node, expanded }: { node: EventDataNode<TreeNode>, expanded: boolean },
+  ): Promise<void> => {
     setCurrentExpandedKeys(expandedKeys);
 
     if (expanded && !node.loaded) {
@@ -80,10 +82,7 @@ export default function StoryComments(
 
   return (
     <>
-      <RefreshButton
-        setTreeData={setTreeData}
-        storyId={storyId}
-      />
+      <RefreshButton setTreeData={setTreeData} storyId={storyId} />
       <Tree
         showLine
         switcherIcon={<DownOutlined />}
