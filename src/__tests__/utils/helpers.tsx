@@ -1,6 +1,11 @@
 import { FileOutlined } from '@ant-design/icons';
 
-import { generateTreeData, generateNestedTreeData, updateTreeData } from '@/utils/helpers';
+import {
+  generateTreeData,
+  generateNestedTreeData,
+  updateTreeData,
+  cleanText,
+} from '@/utils/helpers';
 import { getCommentsById } from '@/app/lib/data';
 import { TreeNode, Comment } from '@/types/definitions';
 
@@ -190,5 +195,41 @@ describe('updateTreeData', () => {
         loaded: true,
       }],
     }]);
+  });
+});
+
+describe('cleanText', () => {
+  it('removes HTML tags', () => {
+    const input = '<p>Test</p>';
+    const output = 'Test';
+    expect(cleanText(input)).toEqual(output);
+  });
+
+  it('does not decode HTML entities', () => {
+    const input = '&lt;div&gt;Test&amp;Test2&lt;/div&gt;';
+    const output = 'divTestTest2div';
+    expect(cleanText(input)).toEqual(output);
+  });
+
+  it('removes non-alphanumeric characters', () => {
+    const input = 'Test!@#$%^&*()_+=';
+    const output = 'Test!';
+    expect(cleanText(input)).toEqual(output);
+  });
+
+  it('collapses multiple spaces into a single space', () => {
+    const input = 'Test     text';
+    const output = 'Test text';
+    expect(cleanText(input)).toEqual(output);
+  });
+
+  it('trims leading and trailing spaces', () => {
+    const input = '  Test text  ';
+    const output = 'Test text';
+    expect(cleanText(input)).toEqual(output);
+  });
+
+  it('returns an empty string if input is empty', () => {
+    expect(cleanText('')).toEqual('');
   });
 });
