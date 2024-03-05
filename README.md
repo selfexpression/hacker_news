@@ -6,3 +6,7 @@
 * ```$ yarn install```
 * ```$ yarn build```
 * ```$ yarn start```
+
+### Testing:
+
+* ```$ yarn test```
