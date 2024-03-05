@@ -5,5 +5,5 @@ export const hackerNewsApi = {
 
 export const pageRoutes = {
   home: () => '/',
-  stories: (id: number): string => `/stories/${id}`,
+  stories: (id: number | string): string => `/stories/${id}`,
 };

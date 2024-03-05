@@ -12,7 +12,7 @@ import { getCommentsById, getCurrentStory } from '@/app/lib/data';
 import { generateTreeData, updateTreeData, generateNestedTreeData } from '@/utils/helpers';
 import { useStory } from '@/app/hooks';
 
-function RefreshButton(
+export function RefreshButton(
   {
     setTreeData,
     storyId,

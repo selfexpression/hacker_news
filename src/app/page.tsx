@@ -1,6 +1,6 @@
 'use server';
 
-import StoriesList from './ui/news-list';
+import StoriesList from './ui/stories-list';
 import { getStories } from './lib/data';
 
 export default async function HomePage():Promise<JSX.Element> {

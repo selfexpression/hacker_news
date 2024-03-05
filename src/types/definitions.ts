@@ -1,7 +1,7 @@
 export type Story = {
   by: string;
   descendants: number;
-  id: number;
+  id: number | string;
   kids?: number[];
   score: number;
   time: number;
