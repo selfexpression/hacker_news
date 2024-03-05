@@ -1,4 +1,4 @@
-### Go to App-> [MOB Cut Studio App](https://hacker-news-dashboard.vercel.app/)
+### Go to App-> [Hacker News](https://hacker-news-dashboard.vercel.app/)
 
 ### Installation Guide:
 
