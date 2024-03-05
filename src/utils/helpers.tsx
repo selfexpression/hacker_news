@@ -1,4 +1,4 @@
-import { FileOutlined, CarryOutOutlined } from '@ant-design/icons';
+import { FileOutlined } from '@ant-design/icons';
 
 import type { Comment, TreeNode } from '@/types/definitions';
 import { getCommentsById } from '@/app/lib/data';
@@ -32,7 +32,7 @@ export const generateTreeData = (
       {
         key: kid.toString(),
         title: 'Loading...',
-        icon: <CarryOutOutlined />,
+        icon: <FileOutlined />,
         loaded: false,
       }
     ))

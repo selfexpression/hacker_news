@@ -1,4 +1,4 @@
-import { FileOutlined, CarryOutOutlined } from '@ant-design/icons';
+import { FileOutlined } from '@ant-design/icons';
 
 import { generateTreeData } from '@/utils/helpers';
 import { TreeNode, Comment } from '@/types/definitions';
@@ -51,7 +51,7 @@ describe('generateTreeData', () => {
       children: [{
         key: '2',
         title: 'Loading...',
-        icon: <CarryOutOutlined />,
+        icon: <FileOutlined />,
         loaded: false,
       }],
     }];
