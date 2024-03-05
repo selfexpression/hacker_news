@@ -8,6 +8,7 @@ import NavLink from './nav-link';
 
 import type { Story } from '@/types/definitions';
 import { useStory } from '@/app/hooks';
+import { generateDate } from '@/utils/helpers';
 
 export default function StoryHeader(
   { story }: { story: Story },
@@ -34,11 +35,13 @@ export default function StoryHeader(
           </Col>
           <Divider type="vertical" />
           <Col>
-            <Text>Date: {new Date(story.time * 1000).toLocaleDateString()}</Text>
+            <Text>Date: {generateDate(story.time)}</Text>
           </Col>
           <Divider type="vertical" />
           <Col>
-            <Text>Comments: {contextStory?.descendants ?? story.descendants}</Text>
+            <Text>
+              Comments: {contextStory?.descendants ?? story.descendants}
+            </Text>
           </Col>
         </Row>
       </header>

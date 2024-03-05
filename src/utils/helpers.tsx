@@ -20,6 +20,10 @@ export const cleanText = (text: string): string => (
     : ''
 );
 
+export const generateDate = (time: number): string => (
+  new Date(time * 1000).toLocaleDateString()
+);
+
 export const generateTreeData = (
   comments: Comment[],
 ): TreeNode[] => comments.map(({ id, text, kids }) => ({

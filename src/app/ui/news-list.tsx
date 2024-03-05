@@ -13,6 +13,7 @@ import { getStories } from '../lib/data';
 
 import { pageRoutes } from '@/utils/routes';
 import type { Story } from '@/types/definitions';
+import { generateDate } from '@/utils/helpers';
 
 function StoriesListHeader(
   { onRefresh, isRefreshing }
@@ -50,7 +51,7 @@ function StoryItem(
         description={`
           Author: ${story.by} | 
           Rating: ${story.score} | 
-          Date: ${new Date(story.time * 1000).toLocaleDateString()}`}
+          Date: ${generateDate(story.time)}`}
       />
     </List.Item>
   );
