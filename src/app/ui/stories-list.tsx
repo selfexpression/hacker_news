@@ -15,7 +15,7 @@ import { pageRoutes } from '@/utils/routes';
 import type { Story } from '@/types/definitions';
 import { generateDate } from '@/utils/helpers';
 
-function StoriesListHeader(
+export function StoriesListHeader(
   { onRefresh, isRefreshing }
   : { onRefresh: () => void, isRefreshing: boolean },
 ): JSX.Element {
@@ -36,7 +36,7 @@ function StoriesListHeader(
   );
 }
 
-function StoryItem(
+export function StoryItem(
   { story, index }: { story: Story, index: number },
 ): JSX.Element {
   return (
