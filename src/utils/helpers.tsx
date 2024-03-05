@@ -3,10 +3,10 @@ import { FileOutlined, CarryOutOutlined } from '@ant-design/icons';
 import type { Comment, TreeNode } from '@/types/definitions';
 import { getCommentsById } from '@/app/lib/data';
 
-const cleanText = (text: string): string => (
+export const cleanText = (text: string): string => (
   text
     ? text
-      .replace(/<a .*?>(.*?)<\/a>/g, ' ')
+      .replace(/<a .*?>(.*?)<\/a>/g, ' $1 ')
       .replace(/<[^>]*>/g, ' ')
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
@@ -14,7 +14,7 @@ const cleanText = (text: string): string => (
       .replace(/&quot;/g, '"')
       .replace(/&#x27;/g, '\'')
       .replace(/&nbsp;/g, ' ')
-      .replace(/[^a-zA-Z\s,.!?']/g, '')
+      .replace(/[^a-zA-Z\u0400-\u04FF\d\s,.!?']/g, '')
       .replace(/\s+/g, ' ')
       .trim()
     : ''

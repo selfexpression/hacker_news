@@ -26,4 +26,5 @@ export type TreeNode = {
   isLeaf?: boolean;
   children?: TreeNode[];
   loaded?: boolean;
+  icon?: JSX.Element | boolean;
 }

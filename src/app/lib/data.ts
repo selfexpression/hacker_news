@@ -25,7 +25,6 @@ export async function getStories(): Promise<Story[]> {
 export async function getCurrentStory(
   id: string | number,
 ): Promise<Story> {
-  noStore();
   try {
     const { data } = await axios.get(hackerNewsApi.currentItem(id));
     return data;
